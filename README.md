@@ -1,12 +1,13 @@
 # Glamping Quail Eggs 🏕️🥚
 
-Trip-planning site for 4–5 friends (3 in NYC, 1 in Boston, +1 maybe) glamping in Connecticut, summer 2027.
+Trip-planning site for 4–5 friends (3 in NYC, 1 in Boston, +1 maybe): a cozy hot-tub weekend in Connecticut, February or March 2027.
 
 - Compare 4 regions by drive time from both cities
-- Map + browse real Airbnb treehouses, cabins, tiny homes, farm stays and domes
-- "Whole camp" bundles: book several tiny cabins on the same land for the group
+- A shortlist of 12 Airbnbs that all have a private hot tub, sleep 5+, and are open in winter, plus a map
 - Heart favorites and share your list with a link
-- Things to do per region, non-Airbnb glamping options, getting there, packing list
+- Winter things to do per region, winter notes, getting there, packing list
 
 Single static `index.html`, served by GitHub Pages: https://beaumontetse.github.io/glamping-quail-eggs/
-Listing prices were pulled from Airbnb for Jun 18–20, 2027 (2 nights, 4–5 guests) and change often.
+Prices were pulled from Airbnb for Feb 19–21 and Mar 5–7, 2027 (2 nights, 5 guests) and change often.
+
+To point the wishlist button at a real Airbnb wishlist, build with `WISHLIST=<url> python3 build3.py` (build script lives outside the repo) or edit the `WISHLIST` constant in `index.html`.
