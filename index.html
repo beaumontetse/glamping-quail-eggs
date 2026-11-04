@@ -201,7 +201,7 @@ select.pill{appearance:none;padding-right:30px;background:var(--surface) url("da
 .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
 .card.flash{animation:flash 1.8s ease}
 @keyframes flash{0%,100%{box-shadow:var(--shadow)}30%{box-shadow:0 0 0 3px var(--ember),var(--shadow-lg)}}
-.card .ph{position:relative;aspect-ratio:4/3;background:var(--sunk);overflow:hidden;margin:8px 8px 0;border-radius:14px}
+.card .ph{position:relative;aspect-ratio:4/3;background:var(--sunk);overflow:hidden;margin:8px 8px 0;border-radius:14px;touch-action:pan-y}
 .card .ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
 .card:hover .ph img{transform:scale(1.04)}
 .card .ph .tl{position:absolute;left:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap}
@@ -210,7 +210,7 @@ select.pill{appearance:none;padding-right:30px;background:var(--surface) url("da
 @media (hover:none){.card .ph .nav2{opacity:1}}
 .card .ph .nav2 button{width:30px;height:30px;border-radius:50%;border:0;background:rgba(252,247,238,.92);color:#2E2219;font-size:15px;line-height:1;box-shadow:0 1px 4px rgba(0,0,0,.2)}
 .dots{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:4px;pointer-events:none}
-.dots i{width:6px;height:6px;border-radius:50%;background:#fff;opacity:.5}.dots i.on{opacity:1}
+.dots i{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.5}.dots i.on{opacity:1}
 .heart{position:absolute;right:10px;top:10px;width:38px;height:38px;border-radius:50%;border:0;background:rgba(252,247,238,.92);display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .2s}
 .heart:active{transform:scale(.88)}
 .heart svg{width:19px;height:19px;fill:none;stroke:#2E2219;stroke-width:2}
@@ -507,6 +507,7 @@ function filtered(){
 function renderPills(){
   $("#areaPills").innerHTML=[{id:"all",name:"All regions"},...AREAS].map(a=>{const n=LISTINGS.filter(x=>a.id==="all"||x.area===a.id).length;
     return `<button class="pill${state.area===a.id?" on":""}" data-a="${a.id}" style="--ac:var(${a.color||"--muted"})">${a.color?"<i></i>":""}${esc(a.short||a.name)} <small>${n}</small></button>`}).join("");
+  $$("#areaPills .pill").forEach(b=>b.onclick=()=>setArea(b.dataset.a));
 }
 function card(x){
   const a=AMAP[x.area], on=saved.includes(x.id);
@@ -538,12 +539,19 @@ function renderStays(){
   bindCards($("#grid"));
   if(window._mapFilter) _mapFilter();
 }
+function stepPhoto(ph,d){
+  const x=BYID[ph.closest(".card").id.slice(2)];if(x.pics.length<2)return;
+  const i=(+ph.dataset.i+d+x.pics.length)%x.pics.length;ph.dataset.i=i;
+  ph.querySelector("img").src=img(x.pics[i]);ph.querySelectorAll(".dots i").forEach((dot,j)=>dot.classList.toggle("on",j===i));
+}
 function bindCards(root){
   root.querySelectorAll(".heart").forEach(b=>b.onclick=e=>{e.stopPropagation();toggleSave(b.dataset.id)});
-  root.querySelectorAll(".nav2 button").forEach(b=>b.onclick=e=>{
-    e.stopPropagation();const ph=b.closest(".ph"),x=BYID[b.closest(".card").id.slice(2)];
-    let i=(+ph.dataset.i+ +b.dataset.d+x.pics.length)%x.pics.length;ph.dataset.i=i;
-    ph.querySelector("img").src=img(x.pics[i]);ph.querySelectorAll(".dots i").forEach((d,j)=>d.classList.toggle("on",j===i));
+  root.querySelectorAll(".nav2 button").forEach(b=>b.onclick=e=>{e.stopPropagation();stepPhoto(b.closest(".ph"),+b.dataset.d)});
+  root.querySelectorAll(".ph").forEach(ph=>{
+    let sx=0,sy=0,t=0;
+    ph.addEventListener("touchstart",e=>{const p=e.touches[0];sx=p.clientX;sy=p.clientY;t=Date.now()},{passive:true});
+    ph.addEventListener("touchend",e=>{const p=e.changedTouches[0],dx=p.clientX-sx,dy=p.clientY-sy;
+      if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.5&&Date.now()-t<600)stepPhoto(ph,dx<0?1:-1)},{passive:true});
   });
 }
 function refreshHearts(){$$(".heart[data-id],.mini[data-id]").forEach(h=>h.classList.toggle("on",saved.includes(h.dataset.id)))}
