@@ -473,7 +473,7 @@ function initTrip(){
   const upd=()=>{trip={ci:$("#ci").value||DEFAULT_CI,co:$("#co").value||DEFAULT_CO,g:+$("#guests").value};
     if(new Date(trip.co)<=new Date(trip.ci)){const d=new Date(trip.ci);d.setDate(d.getDate()+2);trip.co=d.toISOString().slice(0,10);$("#co").value=trip.co}
     store.set("gq.trip3",trip);
-    $("#tripnote").textContent=(trip.ci===DEFAULT_CI&&trip.co===DEFAULT_CO)?"placeholder weekend! pick ours & every link updates":"links now open on your dates ✓";
+    $("#tripnote").textContent=(trip.ci===DEFAULT_CI&&trip.co===DEFAULT_CO)?"placeholder weekend! pick ours & every link updates":"links now open on your dates";
     renderAreas();renderStays();renderSaved();renderVerdict();};
   ["#ci","#co","#guests"].forEach(s=>$(s).addEventListener("change",upd));
   upd();
