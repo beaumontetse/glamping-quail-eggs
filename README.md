@@ -1,4 +1,4 @@
-# Glamping Quail Eggs 🏕️🥚
+# Quail Eggs go Glamping 🏕️🥚
 
 Trip-planning site for 4–5 friends (3 in NYC, 1 in Boston, +1 maybe): a cozy hot-tub weekend in Connecticut, February or March 2027.
 
